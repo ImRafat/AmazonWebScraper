@@ -4,43 +4,47 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 import time
 import json
-import os
 
-search = input("Please input the keyword you want to search for potential products....")
+search = input("Please seperate each keyword you want to search with a comma: ")
 
 # Create an instance of the Chrome web driver
 # Create an instance of the Chrome web driver using webdriver_manager
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
+#converts it into a list
+keyWords = search.split(',');
+
 # Navigate to the Amazon homepage
 driver.get("https://www.amazon.com")
 
-# Find the search box element using its ID
-search_box = driver.find_element(By.ID, "twotabsearchtextbox")
+for eachItem in keyWords:
+    search_box = driver.find_element(By.ID, "twotabsearchtextbox")
 
-search_box.send_keys(search)
+    search_box.clear()
+    search_box.send_keys(eachItem)
 
-driver.find_element(By.ID, "nav-search-submit-button").click()
+    driver.find_element(By.ID, "nav-search-submit-button").click()
 
-item_elements = driver.find_elements(By.CSS_SELECTOR, "s-result-item")
+    item_elements = driver.find_elements(By.CLASS_NAME, "s-result-item")
 
-print(item_elements)
+    print(item_elements[1].text)
 
-for item in item_elements:
-    title_element = item.find_element(By.CSS_SELECTOR, "a-size-base-plus")
-    print(title_element.text)
+    for item in item_elements:
+        title_element = item.find_element(By.CSS_SELECTOR, "a-size-base-plus")
+        print(title_element.text)
 
-data = {
-    "name": "John",
-    "age": 30,
-    "city": "New York"
-}
+    data = {
+        "name": "John",
+        "age": 30,
+        "city": "New York"
+    }
 
-# Convert the dictionary to a JSON object
-with open("data.json", "w") as outfile:
-    # Write the JSON object to the file
-    json.dump(data, outfile)
-
+    time.sleep(10)
+    # Convert the dictionary to a JSON object
+    with open("data.json", "w") as outfile:
+        # Write the JSON object to the file
+        json.dump(data, outfile)
+    
 # Close the browser
 #driver.close()
-time.sleep(10)
+
